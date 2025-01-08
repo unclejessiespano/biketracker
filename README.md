@@ -59,12 +59,23 @@ The scraper.cr file (/src/scripts/scraper.cr) does all of the data scraping. I w
 #### Scraping Flow
 1. The user runs the scraper.cr script and passes a -b and possibly an -l flag. The -b flag allows the user to specify the bike to scrape data for, the -l flag limits the number of times the scraper will run. If a limit is not passed, the scraper will run once every 60 seconds until the script is stopped.
     
-    The following script will tell the scraper to find data for the "AW Stealth TT" and scrape data every 60 seconds.
+    The following script tells the scraper to find data for the "AW Stealth TT" and scrape data every 60 seconds.
 
     ```
     crystal run ./src/scripts/scraper.cr -- -b "AW Stealth TT"
     ```
+2. Once the scraper finds the bike, it scrapes the bike_id, price, and adds it to tuple along with the bike_name.
+3. The data is then passed to the **save_price** method
+4. The **save_price** method gets or sets the bike in the database. I wanted to ensure there was only one instance of the bike in the bike table. The method checks to see if a bike with a product_id exists in the database. If it does, it returns it. It it doesn't, it creates a bike in the table and returns the newly added bike.
+5. Once the method has the bike it, it inserts the price into the prices table and then pushes the date=>price key/value pair onto the json object in the price column of the bikes table.
+6. The process is now complete and will start all over until a) the script is stopped or b) the limit has been reached
 
-## Contributors
+## Resources used to learn Crystal
+* http://crystal-lang.org
+* https://docs.amberframework.org/amber
+* https://github.com/crystal-lang/crystal-sqlite3
+* https://github.com/jeromegn/slang
+* Stack Overflow
+* Chat GPT
 
-- [your-github-user](https://github.com/your-github-user) Kevin Ruiz - creator, maintainer
+
