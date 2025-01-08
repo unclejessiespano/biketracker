@@ -1,0 +1,37 @@
+version: '2'
+
+services:
+  app:
+    build: .
+    image: bike_tracker
+    command: amber watch
+    environment:
+      DATABASE_URL: sqlite3:./db/bike_tracker_development.db
+    ports:
+      - 3000:3000
+    links:
+      - db
+    volumes:
+    - .:/app
+    - shards:/app/lib
+
+  migrate:
+    build: .
+    image: bike_tracker
+    command: bash -c 'amber db migrate seed'
+    environment:
+      DATABASE_URL: sqlite3:./db/bike_tracker_development.db
+    volumes:
+      - .:/app
+    links:
+      - db
+
+  db:
+    image: bike_tracker
+    command: 'bash -c "ls > /dev/null"'
+    volumes:
+    - db:/app/local/db
+
+volumes:
+  db:
+  shards:
